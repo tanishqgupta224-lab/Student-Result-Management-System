@@ -1,0 +1,195 @@
+# ---------------------------------------------
+# Student Result Management System (Beginner Friendly)
+# ---------------------------------------------
+
+# List to store all students
+students = []
+
+# List of subjects (fixed)
+SUBJECTS = ["Maths", "Science", "English", "Computer", "Hindi"]
+
+
+def input_marks():
+    """
+    Ask the user to enter marks for each subject.
+    Returns a dictionary like: {"Maths": 90, "Science": 80, ...}
+    """
+    marks = {}
+
+    for subject in SUBJECTS:
+        while True:
+            value = input(f"Enter marks for {subject} (0-100): ")
+
+            # Check if input is a number
+            if not value.isdigit():
+                print("Invalid input! Please enter only numbers.")
+                continue
+
+            value = int(value)
+
+            # Check range 0-100
+            if 0 <= value <= 100:
+                marks[subject] = value
+                break
+            else:
+                print("Marks must be between 0 and 100. Try again.")
+
+    return marks
+
+
+def calculate_result(marks):
+    """
+    Calculate total marks, percentage, grade and pass/fail status.
+    """
+    # Total marks
+    total = 0
+    for m in marks.values():
+        total += m
+
+    # Number of subjects
+    num_subjects = len(marks)
+
+    # Percentage
+    percentage = total / num_subjects
+
+    # Grade (simple if-elif ladder)
+    if percentage >= 90:
+        grade = "A+"
+    elif percentage >= 80:
+        grade = "A"
+    elif percentage >= 70:
+        grade = "B+"
+    elif percentage >= 60:
+        grade = "B"
+    elif percentage >= 50:
+        grade = "C"
+    else:
+        grade = "F"
+
+    # Pass or Fail
+    if percentage >= 50:
+        status = "Pass"
+    else:
+        status = "Fail"
+
+    return total, percentage, grade, status
+
+
+def add_student():
+    """
+    Add a new student into the list.
+    """
+    print("\n--- Add New Student ---")
+
+    roll_no = input("Enter Roll Number: ")
+    name = input("Enter Name: ")
+    student_class = input("Enter Class/Section: ")
+
+    # Check if roll number already exists
+    for s in students:
+        if s["roll_no"] == roll_no:
+            print("A student with this roll number already exists!")
+            return
+
+    print("\nEnter marks for the student:")
+    marks = input_marks()
+
+    total, percentage, grade, status = calculate_result(marks)
+
+    # Create a student dictionary
+    student = {
+        "roll_no": roll_no,
+        "name": name,
+        "class": student_class,
+        "marks": marks,
+        "total": total,
+        "percentage": percentage,
+        "grade": grade,
+        "status": status
+    }
+
+    # Add to list
+    students.append(student)
+    print("\nStudent added successfully!")
+
+
+def view_all_students():
+    """
+    Show a short summary of all students.
+    """
+    print("\n--- All Students Summary ---")
+
+    if len(students) == 0:
+        print("No students found.")
+        return
+
+    for s in students:
+        print("----------------------------------")
+        print("Roll No   :", s["roll_no"])
+        print("Name      :", s["name"])
+        print("Class     :", s["class"])
+        print("Percentage: {:.2f}%".format(s["percentage"]))
+        print("Grade     :", s["grade"])
+        print("Status    :", s["status"])
+    print("----------------------------------")
+
+
+def view_student_result():
+    """
+    Show full result of one student using roll number.
+    """
+    print("\n--- View Student Result ---")
+    roll_no = input("Enter Roll Number: ")
+
+    # Search for the student
+    for s in students:
+        if s["roll_no"] == roll_no:
+            print("\n--- Result ---")
+            print("Name    :", s["name"])
+            print("Roll No :", s["roll_no"])
+            print("Class   :", s["class"])
+
+            print("\nMarks:")
+            for subject, marks in s["marks"].items():
+                print(subject, ":", marks)
+
+            print("\nTotal Marks :", s["total"])
+            print("Percentage  : {:.2f}%".format(s["percentage"]))
+            print("Grade       :", s["grade"])
+            print("Status      :", s["status"])
+            return
+
+    # If loop finishes, roll no not found
+    print("Student with this roll number not found.")
+
+
+def main_menu():
+    """
+    Show main menu again and again until user chooses Exit.
+    """
+    while True:
+        print("\n====================================")
+        print("   Student Result Management System")
+        print("====================================")
+        print("1. Add New Student")
+        print("2. View All Students Summary")
+        print("3. View Individual Student Result")
+        print("4. Exit")
+        choice = input("Enter your choice (1-4): ")
+
+        if choice == "1":
+            add_student()
+        elif choice == "2":
+            view_all_students()
+        elif choice == "3":
+            view_student_result()
+        elif choice == "4":
+            print("Exiting... Goodbye!")
+            break
+        else:
+            print("Invalid choice! Please select a number from 1 to 4.")
+
+
+# Run the program
+if __name__ == "__main__":
+    main_menu()
